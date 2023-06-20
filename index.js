@@ -3,10 +3,11 @@ import connectDB from "./config/db.js";
 import clientRoutes from "./routes/clientRoute.js";
 import adminRoutes from "./routes/adminRoute.js";
 import productRoutes from "./routes/productRoute.js";
+import paymentOrderRoutes from "./routes/paymentOrderRoute.js";
 import cors from "cors";
 const app = express();
 
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.PORT || 8000;
 connectDB();
 
 app.use(cors());
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", clientRoutes);
 app.use("/api/auth", adminRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/braintree", paymentOrderRoutes);
 
 app.listen(PORT, () => {
   console.log(`API Running on : http://localhost:${PORT} `);

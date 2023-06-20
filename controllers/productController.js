@@ -33,6 +33,7 @@ class productController {
 
   static createNewProduct = async (req, res) => {
     const { name, price, city } = req.body;
+
     try {
       if (name && price && city) {
         const isName = await productsModel.findOne({ name: name, city: city });

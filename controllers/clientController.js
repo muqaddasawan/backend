@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 class clientController {
   static clientRegister = async (req, res) => {
     const { clientname, email, city, password } = req.body;
+    console.log(clientname, email, city, password);
     try {
       if (clientname && email && city && password) {
         const isClient = await clientsModel.findOne({ email: email });
@@ -51,13 +52,12 @@ class clientController {
             const token = jwt.sign({ clientID: isClient._id }, "SameerMalik", {
               expiresIn: "2d",
             });
-            return res
-              .status(200)
-              .json({
-                message: "Login Successful",
-                token,
-                clientname: isClient.clientname,
-              });
+            return res.status(200).json({
+              message: "Login Successful",
+              token,
+              clientID: isClient._id,
+              clientname: isClient.clientname,
+            });
           } else {
             return res.status(400).json({ message: "Invalid Credentials" });
           }
