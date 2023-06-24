@@ -7,6 +7,7 @@ const clientSchema = new mongoose.Schema({
   email: {
     type: String,
   },
+  shipping: {},
   city: {
     type: String,
   },

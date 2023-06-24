@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 class clientController {
   static clientRegister = async (req, res) => {
     const { clientname, email, city, password } = req.body;
-    console.log(clientname, email, city, password);
     try {
       if (clientname && email && city && password) {
         const isClient = await clientsModel.findOne({ email: email });

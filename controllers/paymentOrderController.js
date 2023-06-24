@@ -24,7 +24,7 @@ export const braintreeTokenController = async (req, res) => {
 // //Payment Controller
 export const braintreePaymentController = async (req, res) => {
   try {
-    const { items, nonce, clientId } = req.body;
+    const { items, nonce, clientId, input } = req.body;
     let total = 0;
     items.map((i) => {
       total += i.itemTotal;
@@ -40,8 +40,9 @@ export const braintreePaymentController = async (req, res) => {
       function (error, result) {
         if (result) {
           const order = new ordersModel({
-            products: items,
             payment: result,
+            products: items,
+            shipping: input,
             buyer: clientId,
           }).save();
           res.json({ ok: true });
@@ -53,10 +54,75 @@ export const braintreePaymentController = async (req, res) => {
   } catch (error) {}
 };
 
-class payController {
-  static braintreePaymentController = () => {
-    console.log("Class called");
-  };
-}
+//Order Controller
+export const getOrderController = async (req, res) => {
+  try {
+    const orders = await ordersModel.find().populate("buyer", "clientname");
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while fetching Orders",
+      error,
+    });
+  }
+};
 
-export default payController;
+//Get Single Order Controller
+export const getSingleOrderController = async (req, res) => {
+  const orderId = req.params.orderId;
+
+  try {
+    const orders = await ordersModel
+      .find({ _id: orderId })
+      .populate("buyer", "clientname");
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while fetching Orders",
+      error,
+    });
+  }
+};
+
+//Get Single Order Controller
+export const getBuyerOrderController = async (req, res) => {
+  const buyerId = req.params.buyerId;
+  try {
+    const orders = await ordersModel
+      .find({ buyer: buyerId })
+      .populate("buyer", "clientname");
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while fetching Orders",
+      error,
+    });
+  }
+};
+
+//update order status
+export const updateOrderStatusController = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    const order = await ordersModel.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+    res.json(order);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while Updating Order",
+      error,
+    });
+  }
+};

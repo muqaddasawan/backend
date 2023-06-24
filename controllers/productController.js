@@ -33,7 +33,7 @@ class productController {
 
   static createNewProduct = async (req, res) => {
     const { name, price, city } = req.body;
-
+    console.log(name, price, city);
     try {
       if (name && price && city) {
         const isName = await productsModel.findOne({ name: name, city: city });
@@ -60,6 +60,52 @@ class productController {
       }
     } catch (error) {
       return res.status(400).json({ message: error.message });
+    }
+  };
+
+  static updateProduct = async (req, res) => {
+    const { name, price, city } = req.body;
+
+    try {
+      if (name && price && city) {
+        // const newProduct2 = await productsModel.findByIdAndUpdate(
+        //   req.params.id,
+        //   { ...req.fields, thumbnail: req.file.path },
+        //   { new: true }
+        // );
+        const newProduct = await productsModel.findByIdAndUpdate(
+          req.params.id,
+          { name, price, city, thumbnail: req.file.path },
+          { new: true }
+        );
+        const response = await newProduct.save();
+        if (response) {
+          return res
+            .status(200)
+            .json({ message: "Product Updated Successfully" });
+        }
+      } else {
+        return res.status(400).json({ message: "All Fields are required" });
+      }
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  };
+
+  static deleteProduct = async (req, res) => {
+    try {
+      await productsModel.findByIdAndDelete(req.params.id);
+      return res.status(200).send({
+        successs: true,
+        message: "Product Deleted Successfully",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        successs: false,
+        message: "Error while deleting product",
+        error,
+      });
     }
   };
 }
