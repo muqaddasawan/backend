@@ -34,21 +34,32 @@ class productController {
   static createNewProduct = async (req, res) => {
     const { name, price, city } = req.body;
     console.log(name, price, city);
+
     try {
       if (name && price && city) {
         const isName = await productsModel.findOne({ name: name, city: city });
         if (!isName) {
-          const newProduct = productsModel({
-            name,
-            price,
-            city,
-            thumbnail: req.file.path,
-          });
-          const response = await newProduct.save();
-          if (response) {
+          if (!req.file) {
             return res
-              .status(200)
-              .json({ message: "Product Created Successfully" });
+              .status(400)
+              .json({ message: "Thumbnail not found, Please upload" });
+          } else {
+            const newProduct = productsModel({
+              name,
+              price,
+              city,
+              thumbnail: req.file.path,
+            });
+            const response = await newProduct.save();
+            if (response) {
+              return res
+                .status(200)
+                .json({ message: "Product Created Successfully" });
+            } else {
+              return res
+                .status(400)
+                .json({ message: "Error while saving Product..!" });
+            }
           }
         } else {
           return res
@@ -65,24 +76,33 @@ class productController {
 
   static updateProduct = async (req, res) => {
     const { name, price, city } = req.body;
-
+    console.log("name=", name, "price=", price, "city=", city);
     try {
       if (name && price && city) {
-        // const newProduct2 = await productsModel.findByIdAndUpdate(
-        //   req.params.id,
-        //   { ...req.fields, thumbnail: req.file.path },
-        //   { new: true }
-        // );
-        const newProduct = await productsModel.findByIdAndUpdate(
-          req.params.id,
-          { name, price, city, thumbnail: req.file.path },
-          { new: true }
-        );
-        const response = await newProduct.save();
-        if (response) {
-          return res
-            .status(200)
-            .json({ message: "Product Updated Successfully" });
+        if (!req.file) {
+          const newProduct = await productsModel.findByIdAndUpdate(
+            req.params.id,
+            { name, price, city },
+            { new: true }
+          );
+          const response = await newProduct.save();
+          if (response) {
+            return res
+              .status(200)
+              .json({ message: "Product Updated Successfully" });
+          }
+        } else {
+          const newProduct = await productsModel.findByIdAndUpdate(
+            req.params.id,
+            { name, price, city, thumbnail: req.file.path },
+            { new: true }
+          );
+          const response = await newProduct.save();
+          if (response) {
+            return res
+              .status(200)
+              .json({ message: "Product Updated Successfully" });
+          }
         }
       } else {
         return res.status(400).json({ message: "All Fields are required" });

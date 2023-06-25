@@ -26,7 +26,10 @@ class clientController {
           if (resClient) {
             return res
               .status(201)
-              .json({ message: "Registered Successfully", client: resClient });
+              .json({
+                message: "Registered Successfully. Please Login now",
+                client: resClient,
+              });
           }
         }
       } else {
