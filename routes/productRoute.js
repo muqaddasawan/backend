@@ -1,6 +1,8 @@
 import express from "express";
 import productController from "../controllers/productController.js";
 import multer from "multer";
+import checkIsClientAuthenticated from "../middlewares/clientMiddleware.js";
+
 const router = express.Router();
 
 const storage = multer.diskStorage({
