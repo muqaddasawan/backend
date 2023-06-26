@@ -13,11 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 connectDB();
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 app.use(
@@ -29,7 +25,7 @@ app.use(
 app.use("/public/products", express.static("public/products"));
 
 app.get("/", (req, res) => {
-  res.send("Backend is working...!");
+  res.send("API working...!");
 });
 
 //Routes
