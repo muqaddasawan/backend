@@ -13,35 +13,9 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 connectDB();
 
-const origin = "https://thebaklavaboxx.co.uk";
-
-app.use(
-  cors({
-    origin: origin,
-    preflightContinue: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", origin);
-  res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, X-Auth-TokenExpiredError, Origin, Authorization"
-  );
-  res.header("Access-Control-Allow-Credentials", true);
-
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-    return res.status(200).json({});
-  }
-  next();
-});
+app.use(cors());
 
 app.use(express.json());
-
 app.use(
   express.urlencoded({
     extended: true,
@@ -51,7 +25,7 @@ app.use(
 app.use("/public/products", express.static("public/products"));
 
 app.get("/", (req, res) => {
-  res.send("API working...!");
+  res.send("Backend is working...!");
 });
 
 //Routes
